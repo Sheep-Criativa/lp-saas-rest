@@ -1,0 +1,123 @@
+/* 
+  SISTEMA DE DESIGN TOKENS - CONFIGURAÇÃO CENTRALIZADA
+  
+  Este arquivo contém todas as configurações de cor do projeto.
+  Para alterar as cores do site inteiro, basta modificar as variáveis aqui.
+*/
+
+:root {
+  /* ================================================
+     CORES PRIMÁRIAS DO BRAND
+     ================================================ */
+  --brand-primary: #eab308;        /* Cor principal (amarelo) */
+  --brand-primary-hover: #ca8a04;  /* Hover da cor principal */
+  --brand-primary-light: #fef08a;  /* Versão clara da primária */
+  --brand-primary-lighter: #fefce8; /* Versão mais clara */
+  
+  --brand-secondary: #ea580c;      /* Cor secundária (laranja) */
+  --brand-secondary-hover: #c2410c; /* Hover da secundária */
+  --brand-secondary-light: #fb923c; /* Versão clara da secundária */
+  
+  --brand-accent: #f97316;         /* Cor de destaque */
+  --brand-accent-hover: #ea580c;   /* Hover do destaque */
+  --brand-accent-light: #ec4899;   /* Rosa para gradientes */
+
+  /* ================================================
+     CORES DE TEXTO SEMÂNTICAS
+     ================================================ */
+  --text-primary: #1e293b;         /* Texto principal (escuro) */
+  --text-secondary: #475569;       /* Texto secundário */
+  --text-muted: #64748b;           /* Texto suave/desabilitado */
+  --text-light: #f8fafc;           /* Texto claro */
+  --text-on-dark: #ffffff;         /* Texto sobre fundo escuro */
+  --text-success: #22c55e;         /* Texto de sucesso (verde) */
+
+  /* ================================================
+     CORES DE FUNDO SEMÂNTICAS
+     ================================================ */
+  --bg-primary: #f8fafc;           /* Fundo principal */
+  --bg-secondary: #f1f5f9;         /* Fundo secundário */
+  --bg-accent: #e0e7ff;            /* Fundo de destaque */
+  --bg-subtle: #e2e8f0;            /* Fundo sutil */
+
+  /* ================================================
+     FUNDOS COM TRANSPARÊNCIA (GLASS EFFECT)
+     ================================================ */
+  --bg-glass: rgba(255, 255, 255, 0.4);
+  --bg-glass-hover: rgba(255, 255, 255, 0.6);
+  --bg-glass-light: rgba(255, 255, 255, 0.2);
+  --bg-overlay: rgba(255, 255, 255, 0.3);
+
+  /* ================================================
+     CORES DE BORDA SEMÂNTICAS
+     ================================================ */
+  --border-primary: #fef08a;       /* Borda principal */
+  --border-secondary: #e2e8f0;     /* Borda secundária */
+  --border-subtle: rgba(255, 255, 255, 0.2);
+  --border-glass: rgba(255, 255, 255, 0.2);
+
+  /* ================================================
+     SOMBRAS SEMÂNTICAS
+     ================================================ */
+  --shadow-primary: rgba(234, 179, 8, 0.25);
+  --shadow-primary-hover: rgba(234, 179, 8, 0.4);
+  --shadow-subtle: rgba(0, 0, 0, 0.1);
+  --shadow-glass: rgba(0, 0, 0, 0.1);
+
+  /* ================================================
+     GRADIENTES PRÉ-DEFINIDOS
+     ================================================ */
+  --gradient-primary: linear-gradient(to right, var(--brand-primary), var(--brand-secondary));
+  --gradient-primary-hover: linear-gradient(to right, var(--brand-primary-hover), var(--brand-secondary-hover));
+  --gradient-text: linear-gradient(to right, var(--brand-primary-hover), var(--brand-secondary), var(--brand-accent-light));
+  --gradient-hero: linear-gradient(to right, var(--text-primary), var(--brand-primary), var(--brand-secondary));
+  --gradient-background: linear-gradient(to bottom right, var(--bg-primary), var(--brand-primary-lighter), var(--bg-accent));
+  --gradient-overlay: linear-gradient(to bottom right, rgba(250, 204, 21, 0.1), rgba(251, 146, 60, 0.1), rgba(244, 114, 182, 0.1));
+  --gradient-glow-primary: linear-gradient(to bottom right, rgba(250, 204, 21, 0.2), rgba(251, 146, 60, 0.2));
+  --gradient-glow-secondary: linear-gradient(to bottom right, rgba(251, 146, 60, 0.2), rgba(244, 114, 182, 0.2));
+  --gradient-card: linear-gradient(to bottom right, var(--bg-glass), var(--bg-glass-light));
+}
+
+/* ================================================
+   TEMA ESCURO (OPCIONAL)
+   ================================================ */
+.dark {
+  --text-primary: #f8fafc;
+  --text-secondary: #e2e8f0;
+  --text-muted: #94a3b8;
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-glass: rgba(0, 0, 0, 0.4);
+  --bg-glass-hover: rgba(0, 0, 0, 0.6);
+  --border-glass: rgba(255, 255, 255, 0.1);
+}
+
+/* ================================================
+   VARIANTES DE CORES PARA DIFERENTES SEÇÕES
+   ================================================ */
+
+/* Para cards de benefícios */
+:root {
+  --benefit-1: linear-gradient(to bottom right, var(--brand-primary), var(--brand-accent));
+  --benefit-2: linear-gradient(to bottom right, #22c55e, #10b981);
+  --benefit-3: linear-gradient(to bottom right, var(--brand-accent), #8b5cf6);
+  --benefit-4: linear-gradient(to bottom right, var(--brand-accent), #ef4444);
+  --benefit-5: linear-gradient(to bottom right, #ec4899, #f43f5e);
+  --benefit-6: linear-gradient(to bottom right, var(--brand-primary), #f59e0b);
+}
+
+/* ================================================
+   INSTRUÇÕES DE USO:
+   
+   1. Para mudar a cor principal do site:
+      Altere --brand-primary e --brand-primary-hover
+   
+   2. Para mudar a cor secundária:
+      Altere --brand-secondary e --brand-secondary-hover
+   
+   3. Para mudar cores de texto:
+      Altere as variáveis --text-*
+   
+   4. Para criar um tema customizado:
+      Duplique este arquivo e altere os valores
+   ================================================ */
