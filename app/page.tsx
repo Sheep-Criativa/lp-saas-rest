@@ -38,10 +38,18 @@ import {
   SquareMenu,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function RestaurantSaaSLanding() {
   const observerRef = useRef<IntersectionObserver | null>(null);
+  const [formData, setFormData] = useState({
+    nome: "",
+    telefone: "",
+    email: "",
+    restaurante: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState("");
 
   useEffect(() => {
     observerRef.current = new IntersectionObserver(
@@ -61,12 +69,69 @@ export default function RestaurantSaaSLanding() {
     return () => observerRef.current?.disconnect();
   }, []);
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitMessage("");
+
+    try {
+      const response = await fetch("/api/leads", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.nome,
+          email: formData.email,
+          phone: formData.telefone,
+          restaurant: formData.restaurante,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setSubmitMessage("Obrigado! Entraremos em contato em até 24 horas.");
+        setFormData({
+          nome: "",
+          telefone: "",
+          email: "",
+          restaurante: "",
+        });
+      } else {
+        setSubmitMessage(
+          result.error || "Erro ao enviar formulário. Tente novamente."
+        );
+      }
+    } catch (error) {
+      console.error("Erro ao enviar formulário:", error);
+      setSubmitMessage("Erro ao enviar formulário. Tente novamente.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="min-h-screen bg-main-gradient relative overflow-hidden">
       {/* Background Effects */}
-      <div className="fixed inset-0 bg-overlay pointer-events-none" />
+      <div className="fixed inset-0 bg-overlay-gradient pointer-events-none" />
+      <div className="fixed top-0 left-1/4 w-96 h-96 bg-glow-yellow rounded-full blur-3xl pointer-events-none animate-pulse" />
+      <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-glow-pink rounded-full blur-3xl pointer-events-none animate-pulse delay-1000" />
+{/* 
+  return (
+    <div className="min-h-screen relative overflow-hidden"> */}
+      {/* Background Effects */}
+      {/* <div className="fixed inset-0 bg-overlay pointer-events-none" />
       <div className="fixed top-0 left-1/4 w-96 h-96 bg-glow-primary rounded-full blur-3xl pointer-events-none animate-pulse" />
-      <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-glow-primary rounded-full blur-3xl pointer-events-none animate-pulse delay-1000" />
+      <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-glow-primary rounded-full blur-3xl pointer-events-none animate-pulse delay-1000" /> */}
 
       {/* Header */}
       <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-gray-200/50 shadow-lg shadow-black/5">
@@ -175,18 +240,30 @@ export default function RestaurantSaaSLanding() {
               <div className="relative backdrop-blur-xl bg-gradient-to-br from-white/60 to-gray-100/40 rounded-3xl p-8 shadow-2xl shadow-gray-500/10 border border-white/50">
                 <div className="aspect-video bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl flex items-center justify-center backdrop-blur-sm relative overflow-hidden group">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#f2a516]/5 to-[#f27405]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  <div className="text-center space-y-4 relative z-10">
-                    <div className="w-16 h-16 bg-gradient-to-br from-[#b1b1b1] to-gray-500 rounded-full flex items-center justify-center mx-auto shadow-lg relative overflow-hidden group">
+                  
+                  {/* Vídeo */}
+                  <video 
+                    className="w-full h-full object-cover rounded-2xl"
+                    controls
+                    poster="/thumbnail-video.jpg" // opcional: imagem de preview
+                    preload="metadata"
+                  >
+                    <source src="/v4.mp4" type="video/mp4" />
+                    <source src="/v4.webm" type="video/webm" />
+                    Seu navegador não suporta o elemento de vídeo.
+                  </video>
+
+                  {/* Overlay com botão de play personalizado (opcional) */}
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                    <div className="w-16 h-16 bg-gradient-to-br from-[#b1b1b1] to-gray-500 rounded-full flex items-center justify-center mx-auto shadow-lg relative overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-br from-[#f2a516]/30 to-[#f27405]/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                       <Play className="w-8 h-8 text-white ml-1 relative z-10" />
                     </div>
-                    <p className="text-gray-700 font-medium">Vídeo Demonstrativo</p>
-                    <p className="text-sm text-gray-500">Veja o sistema em ação</p>
                   </div>
                 </div>
               </div>
               <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-gradient-to-br from-gray-300/20 to-gray-400/15 rounded-full blur-xl"></div>
-              <div className="absolute -top-6 -left-6 w-16 h-16 bg-gradient-to-br from-gray-400/15 to-gray-300/20 rounded-full blur-xl"></div>
+              <div className="absolute -top-6 -left-6 w-16 h-16 bg-gradient-to-br from-gray-400/15 to-gray-300/20 rounded-round blur-xl"></div>
             </div>
           </div>
         </div>
@@ -214,42 +291,42 @@ export default function RestaurantSaaSLanding() {
                   "Elimine filas e agilize o atendimento com pedidos direto da mesa",
                 gradient: "benefit-1",
               },
-              {
-                icon: CheckCircle,
-                title: "Zero Erros de Pedido",
-                description:
-                  "Sistema digital elimina erros de comunicação entre cliente e cozinha",
+            {
+              icon: CheckCircle,
+              title: "Zero Erros de Pedido",
+              description:
+                "Sistema digital elimina erros de comunicação entre cliente e cozinha",
                 gradient: "benefit-2",
-              },
-              {
-                icon: Smartphone,
-                title: "Menu Digital Personalizável",
-                description:
-                  "Atualize preços e pratos em tempo real, sem custos de impressão",
+            },
+            {
+              icon: Smartphone,
+              title: "Menu Digital Personalizável",
+              description:
+                "Atualize preços e pratos em tempo real, sem custos de impressão",
                 gradient: "benefit-3",
-              },
-              {
-                icon: BarChart3,
-                title: "Relatórios Inteligentes",
-                description:
-                  "Acompanhe vendas, pratos mais pedidos e performance em tempo real",
+            },
+            {
+              icon: BarChart3,
+              title: "Relatórios Inteligentes",
+              description:
+                "Acompanhe vendas, pratos mais pedidos e performance em tempo real",
                 gradient: "benefit-4",
-              },
-              {
-                icon: Users,
-                title: "Experiência do Cliente",
-                description:
-                  "Interface intuitiva que encanta clientes e aumenta satisfação",
+            },
+            {
+              icon: Users,
+              title: "Experiência do Cliente",
+              description:
+                "Interface intuitiva que encanta clientes e aumenta satisfação",
                 gradient: "benefit-5",
-              },
-              {
-                icon: Smartphone,
-                title: "Responsivo para Mobile",
-                description:
-                  "Conecte com sistemas de pagamento, delivery e gestão existentes",
+            },
+            {
+              icon: Smartphone,
+              title: "Responsivo para Mobile",
+              description:
+                "Conecte com sistemas de pagamento, delivery e gestão existentes",
                 gradient: "benefit-6",
-              },
-            ].map((benefit, index) => (
+            },
+          ].map((benefit, index) => (
               <Card
                 key={index}
                 className="fade-in-section backdrop-blur-xl bg-glass border-glass hover:bg-glass-hover transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-glass group"
@@ -299,23 +376,23 @@ export default function RestaurantSaaSLanding() {
                 icon: SquareMenu,
                 gradient: "benefit-1",
               },
-              {
-                step: "02",
-                title: "Realiza o Pedido",
-                description:
-                  "Interface intuitiva permite personalização e envio direto à cozinha",
-                icon: Smartphone,
-                gradient: "benefit-5",
-              },
-              {
-                step: "03",
-                title: "Equipe Recebe em Tempo Real",
-                description:
-                  "Funcionários acompanham pedidos e status de preparo instantaneamente",
-                icon: Users,
-                gradient: "benefit-2",
-              },
-            ].map((step, index) => (
+            {
+              step: "02",
+              title: "Realiza o Pedido",
+              description:
+                "Interface intuitiva permite personalização e envio direto à cozinha",
+              icon: Smartphone,
+              gradient: "benefit-5",
+            },
+            {
+              step: "03",
+              title: "Equipe Recebe em Tempo Real",
+              description:
+                "Funcionários acompanham pedidos e status de preparo instantaneamente",
+              icon: Users,
+              gradient: "benefit-2",
+            },
+          ].map((step, index) => (
               <div
                 key={index}
                 className="text-center space-y-6 fade-in-section"
@@ -363,13 +440,24 @@ export default function RestaurantSaaSLanding() {
             <div className="relative backdrop-blur-xl bg-gradient-to-br from-white/60 to-gray-100/40 rounded-3xl p-8 shadow-2xl shadow-gray-500/10 border border-white/50">
               <div className="aspect-video bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl flex items-center justify-center backdrop-blur-sm relative overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#f2a516]/5 to-[#f27405]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <div className="text-center space-y-4 relative z-10">
-                  <div className="w-20 h-20 bg-gradient-to-br from-[#b1b1b1] to-gray-500 rounded-full flex items-center justify-center mx-auto shadow-lg hover:scale-110 transition-transform duration-300 relative overflow-hidden group">
+                
+                {/* Vídeo */}
+                <video 
+                  className="w-full h-full object-cover rounded-2xl"
+                  controls
+                  poster="/thumbnail-video-demo.jpg"
+                  preload="metadata"
+                >
+                  <source src="/v4.mp4" type="video/mp4" />
+                  Seu navegador não suporta o elemento de vídeo.
+                </video>
+
+                {/* Overlay com botão de play personalizado (opcional) */}
+                <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                  <div className="w-20 h-20 bg-gradient-to-br from-[#b1b1b1] to-gray-500 rounded-full flex items-center justify-center mx-auto shadow-lg relative overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-[#f2a516]/30 to-[#f27405]/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <Play className="w-10 h-10 text-white ml-1 relative z-10" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-800">Vídeo Demonstrativo Completo</h3>
-                  <p className="text-gray-600">Veja todas as funcionalidades em 3 minutos</p>
                 </div>
               </div>
             </div>
@@ -382,76 +470,6 @@ export default function RestaurantSaaSLanding() {
           </div>
         </div>
       </section>
-
-      {/* Depoimentos */}
-      {/* <section className="py-20 relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-orange-50/50 to-pink-50/50 backdrop-blur-3xl" />
-        <div className="container mx-auto px-4 relative">
-          <div className="text-center space-y-4 mb-16 fade-in-section">
-            <h2 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-              O que nossos clientes dizem
-            </h2>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              Resultados reais de restaurantes que já transformaram sua operação
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                name: "Carlos Silva",
-                role: "Proprietário - Bistrô Gourmet",
-                content:
-                  "Aumentamos nossa eficiência em 40% no primeiro mês. Os clientes adoram a praticidade e nossa equipe consegue focar no que realmente importa: a qualidade da comida.",
-                rating: 5,
-              },
-              {
-                name: "Ana Rodrigues",
-                role: "Gerente - Pizzaria Bella Vista",
-                content:
-                  "Eliminamos completamente os erros de pedido e reduzimos o tempo de atendimento pela metade. O retorno do investimento foi imediato.",
-                rating: 5,
-              },
-              {
-                name: "Roberto Santos",
-                role: "Chef - Restaurante Sabores",
-                content:
-                  "A integração com nossa cozinha foi perfeita. Agora recebemos os pedidos organizados e conseguimos otimizar toda nossa produção.",
-                rating: 5,
-              },
-            ].map((testimonial, index) => (
-              <Card
-                key={index}
-                className="fade-in-section backdrop-blur-xl bg-white/40 border-white/20 hover:bg-white/60 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-black/10"
-                style={{ animationDelay: `${index * 150}ms` }}
-              >
-                <CardContent className="p-6 space-y-4">
-                  <div className="flex space-x-1">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                    ))}
-                  </div>
-                  <p className="text-slate-600 leading-relaxed italic">"{testimonial.content}"</p>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-full flex items-center justify-center shadow-lg">
-                      <span className="text-white font-bold">
-                        {testimonial.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </span>
-                    </div>
-                    <div>
-                      <p className="font-semibold text-slate-800">{testimonial.name}</p>
-                      <p className="text-sm text-slate-500">{testimonial.role}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section> */}
 
       {/* Integrações e Funcionalidades */}
       <section className="py-20 relative">
@@ -473,9 +491,9 @@ export default function RestaurantSaaSLanding() {
                 title: "QR Code Inteligente",
                 gradient: "from-yellow-500 to-orange-500",
               },
-              {
-                icon: MessageSquare,
-                title: "Integração WhatsApp",
+            {
+              icon: MessageSquare,
+              title: "Integração WhatsApp",
                 gradient: "from-green-500 to-emerald-500",
               },
               {
@@ -529,7 +547,7 @@ export default function RestaurantSaaSLanding() {
       </section>
 
       {/* Preços */}
-      <section id="precos" className="py-20 relative">
+      {/* <section id="precos" className="py-20 relative">
         <div className="absolute inset-0 bg-gradient-to-r from-gray-50/60 to-white/80 backdrop-blur-3xl" />
         <div className="container mx-auto px-4 relative">
           <div className="text-center space-y-4 mb-16 fade-in-section">
@@ -545,44 +563,49 @@ export default function RestaurantSaaSLanding() {
             {[
               {
                 name: "Grátis",
-                price: "R$ 0",
-                period: "/mês",
-                description: "Perfeito para testar",
-                features: ["Até 5 mesas", "Menu digital básico", "Pedidos em tempo real", "Suporte por email"],
-                cta: "Começar Grátis",
-                popular: false,
-              },
-              {
-                name: "Profissional",
-                price: "R$ 97",
-                period: "/mês",
-                description: "Ideal para restaurantes médios",
-                features: [
-                  "Mesas ilimitadas",
-                  "Menu personalizado",
-                  "Relatórios avançados",
-                  "Integração WhatsApp",
-                  "Suporte prioritário",
-                ],
-                cta: "Escolher Plano",
-                popular: true,
-              },
-              {
-                name: "Premium",
-                price: "R$ 197",
-                period: "/mês",
-                description: "Para redes e grandes restaurantes",
-                features: [
-                  "Múltiplas unidades",
-                  "Dashboard executivo",
-                  "API personalizada",
-                  "Treinamento incluso",
-                  "Suporte 24/7",
-                ],
-                cta: "Falar com Vendas",
-                popular: false,
-              },
-            ].map((plan, index) => (
+              price: "R$ 0",
+              period: "/mês",
+              description: "Perfeito para testar",
+              features: [
+                "Até 5 mesas",
+                "Menu digital básico",
+                "Pedidos em tempo real",
+                "Suporte por email",
+              ],
+              cta: "Começar Grátis",
+              popular: false,
+            },
+            {
+              name: "Profissional",
+              price: "R$ 97",
+              period: "/mês",
+              description: "Ideal para restaurantes médios",
+              features: [
+                "Mesas ilimitadas",
+                "Menu personalizado",
+                "Relatórios avançados",
+                "Integração WhatsApp",
+                "Suporte prioritário",
+              ],
+              cta: "Escolher Plano",
+              popular: true,
+            },
+            {
+              name: "Premium",
+              price: "R$ 197",
+              period: "/mês",
+              description: "Para redes e grandes restaurantes",
+              features: [
+                "Múltiplas unidades",
+                "Dashboard executivo",
+                "API personalizada",
+                "Treinamento incluso",
+                "Suporte 24/7",
+              ],
+              cta: "Falar com Vendas",
+              popular: false,
+            },
+          ].map((plan, index) => (
               <Card
                 key={index}
                 className={`fade-in-section relative backdrop-blur-xl border-2 ${
@@ -601,7 +624,9 @@ export default function RestaurantSaaSLanding() {
                   </div>
                 )}
                 <CardHeader className="text-center pb-4">
-                  <CardTitle className="text-2xl text-gray-800">{plan.name}</CardTitle>
+                  <CardTitle className="text-2xl text-gray-800">
+                    {plan.name}
+                  </CardTitle>
                   <div className="space-y-2">
                     <div className="flex items-baseline justify-center space-x-1">
                       <span className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
@@ -639,7 +664,7 @@ export default function RestaurantSaaSLanding() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* FAQ */}
       <section id="faq" className="py-20 relative">
@@ -658,30 +683,30 @@ export default function RestaurantSaaSLanding() {
               {[
                 {
                   question: "Como funciona a implementação no meu restaurante?",
-                  answer:
-                    "A implementação é super simples! Nossa equipe faz toda a configuração em até 24 horas. Você só precisa nos enviar seu cardápio e fotos dos pratos. Fornecemos QR codes personalizados e treinamento para sua equipe.",
-                },
-                {
-                  question: "Preciso de internet para o sistema funcionar?",
-                  answer:
-                    "Sim, é necessária conexão com internet para sincronização em tempo real. Porém, o sistema possui modo offline que permite continuar recebendo pedidos mesmo com instabilidade na conexão.",
-                },
-                {
-                  question: "Posso personalizar o visual do cardápio?",
-                  answer:
-                    "Absolutamente! Você pode personalizar cores, logo, fotos dos pratos, descrições e preços. Tudo pode ser alterado em tempo real através do painel administrativo, sem necessidade de conhecimento técnico.",
-                },
-                {
-                  question: "Como funciona o suporte técnico?",
-                  answer:
-                    "Oferecemos suporte via WhatsApp, email e telefone. No plano Profissional, o suporte é prioritário. No Premium, temos suporte 24/7. Também fornecemos materiais de treinamento e tutoriais em vídeo.",
-                },
-                {
-                  question: "Posso cancelar a qualquer momento?",
-                  answer:
-                    "Sim, não há fidelidade. Você pode cancelar a qualquer momento e continuar usando até o final do período pago. Todos os seus dados ficam seguros e você pode exportá-los quando quiser.",
-                },
-              ].map((faq, index) => (
+                answer:
+                  "A implementação é super simples! Nossa equipe faz toda a configuração em até 24 horas. Você só precisa nos enviar seu cardápio e fotos dos pratos. Fornecemos QR codes personalizados e treinamento para sua equipe.",
+              },
+              {
+                question: "Preciso de internet para o sistema funcionar?",
+                answer:
+                  "Sim, é necessária conexão com internet para sincronização em tempo real.",
+              },
+              {
+                question: "Posso personalizar o visual do cardápio?",
+                answer:
+                  "Absolutamente! Você pode personalizar cores, logo, fotos dos pratos, descrições e preços. Tudo pode ser alterado em tempo real através do painel administrativo, sem necessidade de conhecimento técnico.",
+              },
+              {
+                question: "Como funciona o suporte técnico?",
+                answer:
+                  "Oferecemos suporte via WhatsApp, email e telefone. Temos suporte 24/7. Também fornecemos materiais de treinamento e tutoriais em vídeo.",
+              },
+              {
+                question: "Posso cancelar a qualquer momento?",
+                answer:
+                  "Sim, não há fidelidade. Você pode cancelar a qualquer momento e continuar usando até o final do período pago. Todos os seus dados ficam seguros e você pode exportá-los quando quiser.",
+              },
+            ].map((faq, index) => (
                 <AccordionItem
                   key={index}
                   value={`item-${index}`}
@@ -700,7 +725,7 @@ export default function RestaurantSaaSLanding() {
         </div>
       </section>
 
-      {/* Chamada Final */}
+      {/* Chamada Final - Updated with working form */}
       <section className="py-20 relative">
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900/95 via-gray-800/90 to-gray-500 backdrop-blur-xl" />
         <div className="container mx-auto px-4 relative">
@@ -710,8 +735,7 @@ export default function RestaurantSaaSLanding() {
                 Pronto para Revolucionar seu Restaurante?
               </h2>
               <p className="text-xl text-gray-200 leading-relaxed">
-                Preencha o formulário abaixo e receba uma demonstração
-                personalizada em até 24 horas. Veja como centenas de
+                Preencha o formulário abaixo para entrarmos em contato em até 24 horas. Veja como centenas de
                 restaurantes já transformaram sua operação.
               </p>
             </div>
@@ -729,7 +753,19 @@ export default function RestaurantSaaSLanding() {
                     </p>
                   </div>
 
-                  <form className="space-y-4">
+                  {submitMessage && (
+                    <div
+                      className={`p-4 rounded-xl text-center ${
+                        submitMessage.includes("Obrigado")
+                          ? "bg-green-100 text-green-700 border border-green-200"
+                          : "bg-red-100 text-red-700 border border-red-200"
+                      }`}
+                    >
+                      {submitMessage}
+                    </div>
+                  )}
+
+                  <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <label
@@ -742,6 +778,8 @@ export default function RestaurantSaaSLanding() {
                           type="text"
                           id="nome"
                           name="nome"
+                          value={formData.nome}
+                          onChange={handleInputChange}
                           required
                           className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent backdrop-blur-sm bg-white/80 transition-all duration-300"
                           placeholder="Nome completo"
@@ -758,6 +796,8 @@ export default function RestaurantSaaSLanding() {
                           type="tel"
                           id="telefone"
                           name="telefone"
+                          value={formData.telefone}
+                          onChange={handleInputChange}
                           required
                           className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent backdrop-blur-sm bg-white/80 transition-all duration-300"
                           placeholder="(11) 99999-9999"
@@ -776,6 +816,8 @@ export default function RestaurantSaaSLanding() {
                         type="email"
                         id="email"
                         name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
                         required
                         className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent backdrop-blur-sm bg-white/80 transition-all duration-300"
                         placeholder="seu@email.com"
@@ -793,15 +835,21 @@ export default function RestaurantSaaSLanding() {
                         type="text"
                         id="restaurante"
                         name="restaurante"
+                        value={formData.restaurante}
+                        onChange={handleInputChange}
                         required
                         className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent backdrop-blur-sm bg-white/80 transition-all duration-300"
                         placeholder="Nome do seu restaurante"
                       />
                     </div>
 
-                    <Button className="w-full bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 text-white py-4 text-lg font-semibold shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40 transition-all duration-300 hover:scale-105">
-                      Entrar em Contato
-                      <ArrowRight className="ml-2 w-5 h-5" />
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 text-white py-4 text-lg font-semibold shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isSubmitting ? "Enviando..." : "Entrar em Contato"}
+                      {!isSubmitting && <ArrowRight className="ml-2 w-5 h-5" />}
                     </Button>
 
                     <p className="text-xs text-slate-500 text-center leading-relaxed">
@@ -835,32 +883,26 @@ export default function RestaurantSaaSLanding() {
                           "Relatório personalizado com oportunidades de melhoria para seu restaurante",
                       },
                       {
-                        icon: Users,
-                        title: "Consultoria Especializada",
-                        description:
-                          "Conversa com especialista em digitalização de restaurantes",
-                      },
-                      {
                         icon: Zap,
                         title: "Proposta Comercial",
                         description:
                           "Plano personalizado com desconto especial para implementação",
                       },
                     ].map((benefit, index) => (
-                      <div key={index} className="flex items-start space-x-4">
-                        <div className="w-8 h-8 backdrop-blur-xl bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1 border border-white/30">
-                          <benefit.icon className="w-5 h-5 text-white" />
-                        </div>
-                        <div className="space-y-1">
-                          <h4 className="font-semibold text-white">
-                            {benefit.title}
-                          </h4>
-                          <p className="text-gray-200 text-sm leading-relaxed">
-                            {benefit.description}
-                          </p>
-                        </div>
+                    <div key={index} className="flex items-start space-x-4">
+                      <div className="w-8 h-8 backdrop-blur-xl bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1 border border-white/30">
+                        <benefit.icon className="w-5 h-5 text-white" />
                       </div>
-                    ))}
+                      <div className="space-y-1">
+                        <h4 className="font-semibold text-white">
+                          {benefit.title}
+                        </h4>
+                        <p className="text-gray-200 text-sm leading-relaxed">
+                          {benefit.description}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
                   </div>
                 </div>
               </div>
