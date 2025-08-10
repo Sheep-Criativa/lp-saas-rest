@@ -26,15 +26,13 @@ import {
   MessageSquare,
   Package,
   FileText,
-  Star,
-  Check,
+  // Check, retornar se for usar a sessão dos preços
   ArrowRight,
   Play,
   Facebook,
   Twitter,
   Instagram,
   Linkedin,
-  Menu,
   SquareMenu,
 } from "lucide-react";
 import Link from "next/link";
