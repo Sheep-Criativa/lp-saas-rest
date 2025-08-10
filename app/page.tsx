@@ -37,6 +37,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import LiteYouTubeEmbed from "react-lite-youtube-embed";
 
 export default function RestaurantSaaSLanding() {
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -238,25 +239,15 @@ export default function RestaurantSaaSLanding() {
               <div className="relative backdrop-blur-xl bg-gradient-to-br from-white/60 to-gray-100/40 rounded-3xl p-8 shadow-2xl shadow-gray-500/10 border border-white/50">
                 <div className="aspect-video bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl flex items-center justify-center backdrop-blur-sm relative overflow-hidden group">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#f2a516]/5 to-[#f27405]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  
-                  {/* Vídeo */}
-                  <video 
-                    className="w-full h-full object-cover rounded-2xl"
-                    controls
-                    poster="/thumbnail-video.jpg" // opcional: imagem de preview
-                    preload="metadata"
-                  >
-                    <source src="/v4.mp4" type="video/mp4" />
-                    <source src="/v4.webm" type="video/webm" />
-                    Seu navegador não suporta o elemento de vídeo.
-                  </video>
 
-                  {/* Overlay com botão de play personalizado (opcional) */}
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                    <div className="w-16 h-16 bg-gradient-to-br from-[#b1b1b1] to-gray-500 rounded-full flex items-center justify-center mx-auto shadow-lg relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-br from-[#f2a516]/30 to-[#f27405]/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <Play className="w-8 h-8 text-white ml-1 relative z-10" />
-                    </div>
+                  {/* Vídeo (YouTube Lite) */}
+                  <div className="w-full h-full rounded-2xl overflow-hidden">
+                    <LiteYouTubeEmbed
+                      id="kduZuW4A54I"
+                      title="Demonstração RestaurantePro"
+                      poster="hqdefault"
+                      noCookie
+                    />
                   </div>
                 </div>
               </div>
@@ -438,24 +429,15 @@ export default function RestaurantSaaSLanding() {
             <div className="relative backdrop-blur-xl bg-gradient-to-br from-white/60 to-gray-100/40 rounded-3xl p-8 shadow-2xl shadow-gray-500/10 border border-white/50">
               <div className="aspect-video bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl flex items-center justify-center backdrop-blur-sm relative overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#f2a516]/5 to-[#f27405]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                {/* Vídeo */}
-                <video 
-                  className="w-full h-full object-cover rounded-2xl"
-                  controls
-                  poster="/thumbnail-video-demo.jpg"
-                  preload="metadata"
-                >
-                  <source src="/v4.mp4" type="video/mp4" />
-                  Seu navegador não suporta o elemento de vídeo.
-                </video>
 
-                {/* Overlay com botão de play personalizado (opcional) */}
-                <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                  <div className="w-20 h-20 bg-gradient-to-br from-[#b1b1b1] to-gray-500 rounded-full flex items-center justify-center mx-auto shadow-lg relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#f2a516]/30 to-[#f27405]/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <Play className="w-10 h-10 text-white ml-1 relative z-10" />
-                  </div>
+                {/* Vídeo (YouTube Lite) */}
+                <div className="w-full h-full rounded-2xl overflow-hidden">
+                  <LiteYouTubeEmbed
+                    id="kduZuW4A54I"
+                    title="Demonstração RestaurantePro — Completo"
+                    poster="hqdefault"
+                    noCookie
+                  />
                 </div>
               </div>
             </div>
